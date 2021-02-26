@@ -4,6 +4,25 @@
 #
 # for a shell script 
 # lists function names and dependencies
+#  $Revision: 1.1 $
+#
+#  Copyright (C) 2017-2021 Jordi Pujol <jordipujolp AT gmail DOT com>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 3, or (at your option)
+#  any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#************************************************************************
+
 #
 # Call method: parms are relative to this script directory
 #
@@ -90,7 +109,7 @@ _functions() {
 		grep -swF "${f}" \
 			$(awk -v OutputDir="${OutputDir}/" \
 				'{print OutputDir $1}' \
-				< "${OutputDir}/functions.txt")
+				< "${OutputDir}/functions-script.txt")
 		echo "*********************************************************"
 	done < "${OutputDir}/functions.txt" \
 		| sed -e 's|^'"${OutputDir}/"'||' \
@@ -111,7 +130,7 @@ _main() {
 
 	ListAll="y"
 	ShellSource="${1:-"../wwanHotspot-devel/files/wwanHotspot.sh"}"
-	OutputDir="${2:-"./$(basename "${ShellSource}")"}"
+	OutputDir="${2:-"./$(basename "${ShellSource}").d"}"
 
 	mkdir -p "${OutputDir}"
 	rm -f "${OutputDir}/"*
