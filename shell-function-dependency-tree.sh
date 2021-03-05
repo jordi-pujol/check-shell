@@ -76,10 +76,12 @@ _functions() {
 
 	last="$(tail -n 1 "${OutputDir}/functions-script.txt")"
 
-	sed -nre '/^(function[[:blank:]]+)?'"${last}"'\(\)/,$ p' \
+	{ sed -r -e '/^(function[[:blank:]]+)?.+\(\)/,$ d' \
+		< "${ShellSource}"
+	sed -nr -e '/^(function[[:blank:]]+)?'"${last}"'\(\)/,$ p' \
 		< "${ShellSource}" | \
-		sed -re '1,/^[}]/ d' \
-			> "${OutputDir}/$(basename "${ShellSource}")"
+		sed -re '1,/^[}]/ d'
+	} > "${OutputDir}/$(basename "${ShellSource}")"
 
 	while IFS= read -r f; do
 		sed -nre '/^(function[[:blank:]]+)?'"${f}"'\(\)/,/^[}]/p' \
@@ -88,11 +90,11 @@ _functions() {
 	done < "${OutputDir}/functions-script.txt"
 
 	while IFS= read -r f; do
-		grep -qswEe "${f}.*[&]$" "${ShellSource}" && \
+		grep -qswEe "\b${f}\b.*[&]$" "${ShellSource}" && \
 			echo "${f} &" || \
 			echo "${f}"
 	done < <(sort < "${OutputDir}/functions-script.txt") \
-	> "${OutputDir}/functions.txt"
+		> "${OutputDir}/functions.txt"
 
 	while read -r f s; do
 		if dep="$(grep -swF "${f}" \
