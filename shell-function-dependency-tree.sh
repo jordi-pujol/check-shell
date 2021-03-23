@@ -4,7 +4,7 @@
 #
 # for a shell script 
 # lists function names and dependencies
-#  $Revision: 1.1 $
+#  $Revision: 1.2 $
 #
 #  Copyright (C) 2017-2021 Jordi Pujol <jordipujolp AT gmail DOT com>
 #
@@ -84,9 +84,10 @@ _functions() {
 	} > "${OutputDir}/$(basename "${ShellSource}")"
 
 	while IFS= read -r f; do
+		{ printf '%s\n\n' "${CmdInterpreter}"
 		sed -nre '/^(function[[:blank:]]+)?'"${f}"'\(\)/,/^[}]/p' \
-			< "${ShellSource}" \
-			> "${OutputDir}/${f}"
+			< "${ShellSource}"
+		} > "${OutputDir}/${f}"
 	done < "${OutputDir}/functions-script.txt"
 
 	while IFS= read -r f; do
@@ -138,6 +139,8 @@ _main() {
 	rm -f "${OutputDir}/"*
 	Tree="${OutputDir}/functions-tree.txt"
 	Tree1="${OutputDir}/functions-tree-1.txt"
+
+	CmdInterpreter="$(head -n 1 < "${ShellSource}")"
 
 	_functions
 
