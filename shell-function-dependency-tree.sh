@@ -68,6 +68,19 @@ _Dependencies() {
 	_List "${@}"
 }
 
+_commands() {
+	local cmd
+	for cmd in $(sed -n \
+	-re '\|^[^#]*[^(]\(\b([[:alnum:]_]+)\b.*|s||\1|p' \
+	< "${ShellSource}" | \
+	sort -u); do
+		busybox which "${cmd}" > /dev/null 2>&1 || \
+			grep -m 1 -qswe "${cmd}" < "${OutputDir}/functions.txt" || \
+			grep -m 1 -qswe "${cmd}=" < "${ShellSource}" || \
+			echo "${cmd} - Command not found"
+	done > "${OutputDir}/functions-commands.txt"
+}
+
 _functions() {
 	local last f
 	sed -nre '/^(function[[:blank:]]+)?([^[:space:]]+)\(\).*/ s//\2/p' \
@@ -143,6 +156,8 @@ _main() {
 	CmdInterpreter="$(head -n 1 < "${ShellSource}")"
 
 	_functions
+
+	_commands
 
 	: > "${Tree1}"
 	MaxLevel=0
